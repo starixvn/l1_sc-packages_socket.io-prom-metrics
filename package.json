@@ -1,0 +1,41 @@
+{
+  "name": "socket.io-prom-metrics",
+  "version": "1.0.0",
+  "description": "Prometheus metrics for socket.io",
+  "license": "Apache-2.0",
+  "keywords": [
+    "prometheus",
+    "socket.io",
+    "metrics"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://git3.nexdev.net/sc-packages/socket.io-prom-metrics.git"
+  },
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm *.log ./dist ./node_modules -rf",
+    "reg": "npm set registry http://npm.lumigame.com",
+    "verpatch": "npm version patch",
+    "verminor": "npm version minor",
+    "betaver": "npm version prerelease --preid beta",
+    "pub": "npm publish --registry http://npm.lumigame.com",
+    "pubbeta": "npm publish --registry http://npm.lumigame.com --tag beta",
+    "semantic-release": "semantic-release"
+  },
+  "author": {
+    "email": "pentagon@luminetsoft.com",
+    "name": "pentagon"
+  },
+  "dependencies": {
+    "prom-client": "^11.2.1",
+    "socket.io": "^4.1.3"
+  },
+  "devDependencies": {
+    "@types/node": "^16.3.2",
+    "@types/socket.io": "^3.0.2",
+    "typescript": "^4.2.4"
+  }
+}

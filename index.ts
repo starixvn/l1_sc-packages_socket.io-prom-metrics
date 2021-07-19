@@ -112,7 +112,7 @@ export class SocketIOMetrics {
         };
     }
 
-    private bindMetricsOnEmitter(server: NodeJS.EventEmitter, labels: prom.labelValues) {
+    private bindMetricsOnEmitter(namespaceServer: io.Namespace, labels: prom.labelValues) {
         const blacklisted_events = new Set([
             'error',
             'connect',
@@ -122,7 +122,7 @@ export class SocketIOMetrics {
             'removeListener'
         ]);
 
-        server.on('connect', (socket: any) => {
+        namespaceServer.on('connection', (socket: any) => {
             // Connect events
             this.metrics.connectTotal.inc(labels);
             this.metrics.connectedSockets.set((this.ioServer.engine as any).clientsCount);
@@ -166,24 +166,23 @@ export class SocketIOMetrics {
         });
     }
 
-    private bindNamespaceMetrics(server: io.Server, namespace: string) {
+    private bindNamespaceMetrics(nsp: io.Namespace, namespace: string) {
         if (this.boundNamespaces.has(namespace)) {
             return;
         }
-        const namespaceServer = server.of(namespace);
-        this.bindMetricsOnEmitter(namespaceServer, { namespace: namespace });
+        this.bindMetricsOnEmitter(nsp, { namespace: namespace });
         this.boundNamespaces.add(namespace);
     }
 
     private bindMetrics() {
-        Object.keys(this.ioServer._nsps).forEach((nsp) =>
-            this.bindNamespaceMetrics(this.ioServer, nsp)
+        this.ioServer._nsps.forEach((nsp, nspName) =>
+            this.bindNamespaceMetrics(nsp, nspName)
         );
 
         if (this.options.checkForNewNamespaces) {
             setInterval(() => {
-                Object.keys(this.ioServer._nsps).forEach((nsp) =>
-                    this.bindNamespaceMetrics(this.ioServer, nsp)
+                this.ioServer._nsps.forEach((nsp, nspName) =>
+                    this.bindNamespaceMetrics(nsp, nspName)
                 );
             }, 2000);
         }

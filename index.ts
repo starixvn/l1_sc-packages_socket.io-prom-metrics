@@ -125,12 +125,12 @@ export class SocketIOMetrics {
         namespaceServer.on('connection', (socket: any) => {
             // Connect events
             this.metrics.connectTotal.inc(labels);
-            this.metrics.connectedSockets.set((this.ioServer.engine as any).clientsCount);
+            this.metrics.connectedSockets.set(this.ioServer.engine.clientsCount);
 
             // Disconnect events
             socket.on('disconnect', () => {
                 this.metrics.disconnectTotal.inc(labels);
-                this.metrics.connectedSockets.set((this.ioServer.engine as any).clientsCount);
+                this.metrics.connectedSockets.set(this.ioServer.engine.clientsCount);
             });
 
             // Hook into emit (outgoing event)
@@ -152,7 +152,7 @@ export class SocketIOMetrics {
                     const [event, data] = packet.data;
 
                     if (event === 'error') {
-                        this.metrics.connectedSockets.set((this.ioServer.engine as any).clientsCount);
+                        this.metrics.connectedSockets.set(this.ioServer.engine.clientsCount);
                         this.metrics.errorsTotal.inc(labels);
                     } else if (!blacklisted_events.has(event)) {
                         let labelsWithEvent = { event: event, ...labels };
